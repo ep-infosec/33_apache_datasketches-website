@@ -1,0 +1,56 @@
+<!-- Start _includes/tocScript.html -->
+<script>
+  (function () {
+
+    var findLineItem = function (path) {
+      return document.querySelector(`#toc [href="${path}"]`);
+    };
+
+    function findNavItem(path) {
+      return document.querySelector(`.nav [href="${path}"]`);
+    }
+
+    var highlighLineItem = function (element) {
+      element.classList.add('highlight');
+    };
+
+    var checkHasClass = function (element, className) {
+      return element.className.split(' ').find(function (item) { return item === className || '' })
+    }
+
+    var findAllCollapseParents = function (element) {
+      var collapseMenus = [];
+      var elementPointer = element;
+      while (elementPointer !== document.body) {
+        if (checkHasClass(elementPointer, 'collapse')) {
+          collapseMenus.push(elementPointer);
+        }
+        elementPointer = elementPointer.parentElement
+      }
+      return collapseMenus
+    };
+
+    var openMenuItem = function (element) {
+      // $(element).collapse('show') would start a transition, adding `in` class instead.
+      element.classList.add('in');
+    };
+
+    var openAllFromList = function (elementList) {
+      elementList.forEach(openMenuItem);
+    };
+
+    var highlightAndOpenMenu = function () {
+      // Highlight & expand nav item in the TOC
+      var currentLineItem = findLineItem(document.location.pathname);
+      highlighLineItem(currentLineItem);
+      openAllFromList(findAllCollapseParents(currentLineItem));
+
+      // Highlight nav item in top navigation
+      highlighLineItem(findNavItem(document.location.pathname));
+    };
+
+    $(highlightAndOpenMenu);
+
+  }());
+</script>
+<!-- End _includes/tocScript.html -->
